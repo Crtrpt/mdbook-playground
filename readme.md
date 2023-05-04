@@ -5,7 +5,7 @@ mdbook playground 提供对各种语言的支持 后端使用docker
 请求参数
 ```json
 {
-    image:"go",
-    code:"""
+    "image":"go",
+    "code":""
 }
 ```
