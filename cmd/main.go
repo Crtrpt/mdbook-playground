@@ -13,33 +13,34 @@ import (
 )
 
 var Cli *client.Client
-var ContainerList map[string]*types.Container
+var ImageList map[string]*types.ImageSummary
 
 func main() {
-	ContainerList = make(map[string]*types.Container)
+	ImageList = make(map[string]*types.ImageSummary)
 	Cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		panic(err)
 	}
-	containers, err := Cli.ContainerList(context.Background(), types.ContainerListOptions{})
+	images, err := Cli.ImageList(context.Background(), types.ImageListOptions{})
 	if err != nil {
 		panic(err)
 	}
-	for _, container := range containers {
-		ContainerList[container.Names[0]] = &container
-		fmt.Printf("name:%s id:%s\r\n", container.Names[0], container.ID)
+
+	for _, image := range images {
+		ImageList[image.RepoTags[0]] = &image
+		fmt.Printf("name:%v", image)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		buf, _ := io.ReadAll(r.Body)
 		req, _ := url.ParseQuery(string(buf))
 
-		if ContainerList[req.Get("image")] == nil {
+		if ImageList[req.Get("image")] == nil {
 			w.WriteHeader(500)
 			return
 		}
 		fmt.Printf("start image %+v \r\n", req.Get("image"))
-		err := Cli.ContainerStart(context.Background(), ContainerList[req.Get("image")].ID, types.ContainerStartOptions{})
+		err := Cli.ContainerStart(context.Background(), ImageList[req.Get("image")].ID, types.ContainerStartOptions{})
 		if err != nil {
 			w.Write([]byte(err.Error()))
 		}
