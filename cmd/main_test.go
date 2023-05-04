@@ -8,7 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const urlEnd = "http://127.0.0.1:8080"
+
 func TestMain(t *testing.T) {
-	resp, _ := http.PostForm("http://127.0.0.1:8080", url.Values{"image": {"go"}, "code": {"aaa"}})
+	resp, _ := http.PostForm(urlEnd, url.Values{"image": {"go"}, "code": {"aaa"}})
 	assert.Equal(t, resp.StatusCode, 200)
 }

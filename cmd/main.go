@@ -27,6 +27,7 @@ func main() {
 	}
 	for _, container := range containers {
 		ContainerList[container.Names[0]] = &container
+		fmt.Printf("name:%s id:%s\r\n", container.Names[0], container.ID)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +39,10 @@ func main() {
 			return
 		}
 		fmt.Printf("start image %+v \r\n", req.Get("image"))
-		Cli.ContainerStart(context.Background(), ContainerList[req.Get("image")].ID, types.ContainerStartOptions{})
+		err := Cli.ContainerStart(context.Background(), ContainerList[req.Get("image")].ID, types.ContainerStartOptions{})
+		if err != nil {
+			w.Write([]byte(err.Error()))
+		}
 		w.WriteHeader(200)
 		w.Write(buf)
 	})
