@@ -28,7 +28,7 @@ func main() {
 
 	for _, image := range images {
 		ImageList[image.RepoTags[0]] = &image
-		fmt.Printf("name:%v", image)
+		fmt.Printf("name:%+v", image)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
