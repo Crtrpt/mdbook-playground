@@ -12,9 +12,13 @@ command = "python3 preprocessors/example.py"
 #command = "python3 ../../backends/backends.py"
 #renderer = ["html"]
 
+[output.html]
+additional-css = ["xterm.css"]
+additional-js = ["xterm.js","xterm-addon-fit.js"]
+
 [output.html.playground]
 editable = true
 copy-js = true
-line-numbers = false
+line-numbers = true
 
 

@@ -101,7 +101,7 @@ function playground_text(playground) {
         var result_block = code_block.querySelector(".result");
         if (!result_block) {
             result_block = document.createElement('code');
-            result_block.className = 'result hljs language-bash';
+            result_block.className = 'result hljs';
 
             code_block.append(result_block);
         }
@@ -114,7 +114,7 @@ function playground_text(playground) {
             code: text,
         };
 
-        result_block.innerText = "Running...";
+        // result_block.innerText = "Running...";
 
         fetch_with_timeout("http://127.0.0.1:9080", {
             headers: {
@@ -126,14 +126,18 @@ function playground_text(playground) {
         })
         .then(response => response.text())
         .then(response => {
-            console.log(response)
-            if (response.trim() === '') {
-                result_block.innerText = "No output";
-                result_block.classList.add("result-no-output");
-            } else {
-                result_block.innerText = response
-                result_block.classList.remove("result-no-output");
-            }
+                if(result_block.term){
+                   //
+                }else{
+                    var term = new Terminal();
+                    console.log(result_block.dataset)
+                    result_block.term=term
+                    var fitAddon = new FitAddon.FitAddon();
+                    term.loadAddon(fitAddon);
+                    term.open(result_block);
+                    fitAddon.fit();
+                }
+                result_block.term.write(response)
         })
         .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
@@ -168,7 +172,7 @@ function playground_text(playground) {
     // even if highlighting doesn't apply
     code_nodes.forEach(function (block) { block.classList.add('hljs'); });
 
-    Array.from(document.querySelectorAll("code.language-rust")).forEach(function (block) {
+    Array.from(document.querySelectorAll("code.language-go")).forEach(function (block) {
 
         var lines = Array.from(block.querySelectorAll('.boring'));
         // If no lines were hidden, return

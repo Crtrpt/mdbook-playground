@@ -33,6 +33,7 @@
         {{#if print_enable}}
         <link rel="stylesheet" href="{{ path_to_root }}css/print.css" media="print">
         {{/if}}
+        <link rel="stylesheet" href="{{ path_to_root }}xterm.css">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="{{ path_to_root }}FontAwesome/css/font-awesome.css">
@@ -277,9 +278,11 @@
         <script src="{{ path_to_root }}searcher.js" type="text/javascript" charset="utf-8"></script>
         {{/if}}
 
+        <script src="{{ path_to_root }}xterm.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ path_to_root }}clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ path_to_root }}highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{ path_to_root }}book.js" type="text/javascript" charset="utf-8"></script>
+
 
         <!-- Custom JS scripts -->
         {{#each additional_js}}

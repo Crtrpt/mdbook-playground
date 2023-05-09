@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/BurntSushi/toml"
+	mdbookplayground "github.com/crtrpt/mdbook-playground"
 	"github.com/crtrpt/mdbook-playground/internal"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -64,6 +66,7 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.WithValue(context.Background(), "client", Cli)
 	ctx = context.WithValue(ctx, "resp", w)
+	ctx = context.WithValue(ctx, "cfg", cfg)
 	_, err = internal.StartC1(ctx, req.Image, req.Code)
 	if err != nil {
 		fmt.Print("出错了")
@@ -88,8 +91,15 @@ func InitDocker() {
 	}
 }
 
+var cfg *mdbookplayground.Config
+
 // 主程序
 func main() {
+	cfg = &mdbookplayground.Config{}
+	_, err := toml.DecodeFile("./app.toml", cfg)
+	if err != nil {
+		panic(err)
+	}
 	InitDocker()
 	http.HandleFunc("/", StartC)
 	fmt.Printf("listen :9080 \r\n")
