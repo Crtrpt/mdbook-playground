@@ -6,6 +6,9 @@ mdbook playground 提供对各种语言的支持 后端使用docker
 ```json
 {
     "image":"go",
+    "path":"",
     "code":""
 }
 ```
+
+文件替换和运行

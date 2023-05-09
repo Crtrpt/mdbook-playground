@@ -1,3 +1,3 @@
 
 all:
-	echo "aa"
+	go run cmd/test/main.go
