@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/docker/docker v23.0.5+incompatible
+	github.com/rs/xid v1.5.0
 	github.com/stretchr/testify v1.8.2
 )
 
