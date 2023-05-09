@@ -1,0 +1,20 @@
+[book]
+authors = ["jingdor"]
+language = "en"
+multilingual = false
+src = "src"
+
+[preprocessor.example]
+renderers = ["html"]
+command = "python3 preprocessors/example.py"
+
+#[output.backends]
+#command = "python3 ../../backends/backends.py"
+#renderer = ["html"]
+
+[output.html.playground]
+editable = true
+copy-js = true
+line-numbers = false
+
+

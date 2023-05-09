@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -15,9 +14,9 @@ import (
 func StartC1(ctx context.Context, image, code string) (res string, err error) {
 	cid := xid.New().String()
 	cli := ctx.Value("client").(*client.Client)
-	fmt.Printf("start image:%+v cid:%s \r\n ", image, cid)
+	// fmt.Printf("start image:%+v cid:%s \r\n ", image, cid)
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Cmd:   strings.Split(code, " "),
+		Cmd:   []string{"make"},
 		Image: image},
 		nil, nil, nil, cid)
 	if err != nil {

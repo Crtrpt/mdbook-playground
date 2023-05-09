@@ -27,16 +27,13 @@ type ReqForm struct {
 
 // 启动容器
 func StartC(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "OPTIONS" {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // 设置允许访问所有域
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE,UPDATE")
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Token,session,X_Requested_With,Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language,DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Pragma")
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,FooBar")
-		w.Header().Set("Access-Control-Max-Age", "172800")
-		w.Header().Set("Access-Control-Allow-Credentials", "false")
-		w.Header().Set("content-type", "application/json") //// 设置返回格式是json
-		return
-	}
+	w.Header().Set("Access-Control-Allow-Origin", "*") // 设置允许访问所有域
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE,UPDATE")
+	w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Token,session,X_Requested_With,Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language,DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Pragma")
+	w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,FooBar")
+	w.Header().Set("Access-Control-Max-Age", "172800")
+	w.Header().Set("Access-Control-Allow-Credentials", "false")
+	w.Header().Set("content-type", "application/json") //// 设置返回格式是json
 
 	buf, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -54,8 +51,8 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	fmt.Printf("//req:%+v", req.Code)
-	fmt.Printf("//req:%+v", req.Image)
+	// fmt.Printf("//req: %+v", req.Code)
+	// fmt.Printf("//req: %+v", req.Image)
 
 	if ImageList[req.Image] == nil {
 
@@ -69,13 +66,12 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 	ctx = context.WithValue(ctx, "resp", w)
 	_, err = internal.StartC1(ctx, req.Image, req.Code)
 	if err != nil {
+		fmt.Print("出错了")
 		w.Write([]byte(err.Error()))
 		return
 	}
-	// //获取输出日志
+	// // //获取输出日志
 
-	w.WriteHeader(200)
-	// w.Write(buf)
 }
 func InitDocker() {
 	ImageList = make(map[string]*types.ImageSummary)
