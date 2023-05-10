@@ -11,15 +11,6 @@ import (
 	"github.com/crtrpt/mdbook-playground/internal"
 )
 
-type DockerKey string
-
-type ReqForm struct {
-	Code  string `json:"code"`  //代码
-	Repo  string `json:"repo"`  //仓库
-	Path  string `json:"path"`  //路径
-	Image string `json:"image"` //使用的镜像
-}
-
 // 启动容器
 func StartC(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") // 设置允许访问所有域
@@ -38,8 +29,8 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("empty body"))
 		return
 	}
-	fmt.Printf("%+v", string(buf))
-	req := ReqForm{}
+
+	req := internal.ReqForm{}
 	json.Unmarshal(buf, &req)
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -58,6 +49,7 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.WithValue(context.Background(), "client", internal.Cli)
 	ctx = context.WithValue(ctx, "resp", w)
+	ctx = context.WithValue(ctx, "req", req)
 	ctx = context.WithValue(ctx, "cfg", internal.Cfg)
 	_, err = internal.StartContainer(ctx, req.Image, req.Code)
 	if err != nil {

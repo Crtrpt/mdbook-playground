@@ -24,21 +24,21 @@ function playground_text(playground) {
     }
 
     var playgrounds = Array.from(document.querySelectorAll(".playground"));
-    if (playgrounds.length > 0) {
-        fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
-            headers: {
-                'Content-Type': "application/json",
-            },
-            method: 'POST',
-            mode: 'cors',
-        })
-        .then(response => response.json())
-        .then(response => {
-            // get list of crates available in the rust playground
-            let playground_crates = response.crates.map(item => item["id"]);
-            playgrounds.forEach(block => handle_crate_list_update(block, playground_crates));
-        });
-    }
+    // if (playgrounds.length > 0) {
+    //     fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
+    //         headers: {
+    //             'Content-Type': "application/json",
+    //         },
+    //         method: 'POST',
+    //         mode: 'cors',
+    //     })
+    //     .then(response => response.json())
+    //     .then(response => {
+    //         // get list of crates available in the rust playground
+    //         let playground_crates = response.crates.map(item => item["id"]);
+    //         playgrounds.forEach(block => handle_crate_list_update(block, playground_crates));
+    //     });
+    // }
 
     function handle_crate_list_update(playground_block, playground_crates) {
         // update the play buttons after receiving the response
@@ -114,7 +114,19 @@ function playground_text(playground) {
             code: text,
         };
 
-        // result_block.innerText = "Running...";
+        var class_list=code_block.querySelector("code").classList
+        for (var cls of class_list){
+            if(cls.startsWith('container:')){
+                params.image=cls.slice('container:'.length)
+            }
+            if(cls.startsWith("project:")){
+                params.project=cls.slice('project:'.length)
+            }
+            if(cls.startsWith("file:")){
+                params.file=cls.slice('file:'.length)
+            }
+        }
+       
 
         fetch_with_timeout("http://127.0.0.1:9080", {
             headers: {
@@ -130,7 +142,12 @@ function playground_text(playground) {
                    //
                 }else{
                     var term = new Terminal();
-                    console.log(result_block.dataset)
+                    term.onKey(({key})=>{
+                        console.log(key)
+                        if (key.charCodeAt(0) == 13)
+                            term.write('\n');
+                        term.write(key)
+                    })
                     result_block.term=term
                     var fitAddon = new FitAddon.FitAddon();
                     term.loadAddon(fitAddon);

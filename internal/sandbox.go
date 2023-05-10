@@ -62,7 +62,7 @@ func AutoRemoveCloseContainer() (res any, err error) {
 		for _, c := range list {
 			err = Cli.ContainerRemove(context.Background(), c.ID, types.ContainerRemoveOptions{})
 			if err != nil {
-				panic(err)
+				fmt.Printf("err:%+v", err)
 			}
 		}
 	})
@@ -78,8 +78,9 @@ func StartContainer(ctx context.Context, image, code string) (res string, err er
 	cid := xid.New().String()
 	cfg := ctx.Value("cfg").(*Config)
 	cli := ctx.Value("client").(*client.Client)
+	req := ctx.Value("req").(ReqForm)
 	v := make(map[string]struct{})
-
+	fmt.Printf("image:%v source:%v \r\n", image, cfg.RepoDir+"/example/"+req.Project)
 	// 挂载
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Cmd:     strslice.StrSlice{"make"},
@@ -91,7 +92,7 @@ func StartContainer(ctx context.Context, image, code string) (res string, err er
 					Type:     mount.TypeBind,
 					ReadOnly: false,
 					Target:   "/var/data",
-					Source:   cfg.RepoDir + "/example",
+					Source:   cfg.RepoDir + "/example/" + req.Project,
 				},
 			},
 		}, nil, nil, cid)
