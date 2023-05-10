@@ -189,3 +189,7 @@
     z-index: 2;
     position: relative;
 }
+
+.xterm .xterm-viewport{
+    overflow-y:auto
+}

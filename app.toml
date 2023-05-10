@@ -1,1 +1,5 @@
 RepoDir="/Users/jzx/Desktop/mdbook_playground"
+#5秒执行一次删除任务
+AutoRemoveCron="@every 60s"
+#删除1分钟之前的任务
+AutoRemoveBefore="1m"

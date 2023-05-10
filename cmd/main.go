@@ -8,15 +8,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BurntSushi/toml"
-	mdbookplayground "github.com/crtrpt/mdbook-playground"
 	"github.com/crtrpt/mdbook-playground/internal"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 )
-
-var Cli *client.Client
-var ImageList map[string]*types.ImageSummary
 
 type DockerKey string
 
@@ -35,7 +28,6 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers,Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,FooBar")
 	w.Header().Set("Access-Control-Max-Age", "172800")
 	w.Header().Set("Access-Control-Allow-Credentials", "false")
-	w.Header().Set("content-type", "application/json") //// 设置返回格式是json
 
 	buf, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -56,7 +48,7 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("//req: %+v", req.Code)
 	// fmt.Printf("//req: %+v", req.Image)
 
-	if ImageList[req.Image] == nil {
+	if internal.ImageList[req.Image] == nil {
 
 		fmt.Printf("//%+v 出错了", req.Image)
 
@@ -64,43 +56,23 @@ func StartC(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.WithValue(context.Background(), "client", Cli)
+	ctx := context.WithValue(context.Background(), "client", internal.Cli)
 	ctx = context.WithValue(ctx, "resp", w)
-	ctx = context.WithValue(ctx, "cfg", cfg)
-	_, err = internal.StartC1(ctx, req.Image, req.Code)
+	ctx = context.WithValue(ctx, "cfg", internal.Cfg)
+	_, err = internal.StartContainer(ctx, req.Image, req.Code)
 	if err != nil {
-		fmt.Print("出错了")
-		w.Write([]byte(err.Error()))
+		fmt.Print(err.Error())
 		return
 	}
 	// // //获取输出日志
 
 }
-func InitDocker() {
-	ImageList = make(map[string]*types.ImageSummary)
-	Cli, _ = client.NewClientWithOpts(client.FromEnv)
-
-	images, err := Cli.ImageList(context.Background(), types.ImageListOptions{})
-	if err != nil {
-		panic(err)
-	}
-
-	for _, image := range images {
-		ImageList[image.RepoTags[0]] = &image
-		fmt.Printf("name:%+v \r\n", image.RepoTags[0])
-	}
-}
-
-var cfg *mdbookplayground.Config
 
 // 主程序
 func main() {
-	cfg = &mdbookplayground.Config{}
-	_, err := toml.DecodeFile("./app.toml", cfg)
-	if err != nil {
-		panic(err)
-	}
-	InitDocker()
+	internal.InitConfig()
+	internal.InitDockerClient()
+	internal.AutoRemoveCloseContainer()
 	http.HandleFunc("/", StartC)
 	fmt.Printf("listen :9080 \r\n")
 	log.Fatal(http.ListenAndServe(":9080", nil))

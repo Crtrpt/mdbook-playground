@@ -1,3 +1,6 @@
 
 all:
-	cd mdbook-playground && go run cmd/test/main.go
+	go run /main.go
+
+build:
+	cd mdbook && ./../../mdBook/target/debug/mdbook serve
